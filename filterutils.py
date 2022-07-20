@@ -5,7 +5,9 @@ import re
 
 class Condition:
 
-    def __init__(self):
+    def __init__(self, name):
+        self.name = name
+        self.available = tk.IntVar(value=1)
         # 包含数组为 &&，即：包含a且包含b
         self.includeCondition = []
         # 排除数组为 ||，即：不包含c或d
@@ -68,6 +70,8 @@ def filterFile(filename, conditionlist: List[Condition], text):
         for line in f:
             success = True
             for condition in conditionlist:
+                if condition.available.get() == 0:
+                    continue
                 success = True
                 incpatt = condition.getIncludeKeys()
                 if incpatt is not None:
