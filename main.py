@@ -9,6 +9,7 @@ from tkinter import messagebox
 from typing import List, Dict
 
 from conditionmanager import ConditionListWindow
+from eventwindow import EventSelectWindow
 from filterutils import filterFile, Condition, parseFile, StartLine
 from timelinewindow import TimeLineWindow
 
@@ -49,6 +50,14 @@ def onConditionChangedCallback(condition_list):
     filterFilePiece(gl_start_line, gl_end_line)
 
 
+def openFilterDialog():
+    ConditionListWindow(gl_root, onConditionChangedCallback)
+
+
+def openEventDialog():
+    EventSelectWindow(gl_root, onConditionChangedCallback)
+
+
 def closeWindowCallback():
     global gl_root
     gl_root.destroy()
@@ -82,11 +91,16 @@ if __name__ == '__main__':
     first_frame.pack(side='top', fill='x')
 
     # 打开文件按钮
-    btn_open = tk.Button(first_frame, text="open", command=openFileDialog)
-    btn_open.pack(side='left')
+    btn_open_log_file = tk.Button(first_frame, text="log文件", command=openFileDialog)
+    btn_open_log_file.pack(side='left')
 
-    # filter 按钮
-    # btn_filter = tk.Button(first_frame, text="filter", command=onFilterClick).pack(side='right')
+    # 条件窗口 按钮
+    btn_filter_dialog = tk.Button(first_frame, text="条件窗口", command=openFilterDialog)
+    btn_filter_dialog.pack(side='left')
+
+    # 事件窗口 按钮
+    btn_event_dialog = tk.Button(first_frame, text="事件窗口", command=openEventDialog)
+    btn_event_dialog.pack(side='left')
 
     # --------------  第二层 工具栏  --------------
     second_frame = tk.LabelFrame(gl_root)
@@ -105,8 +119,6 @@ if __name__ == '__main__':
     text_main.pack(side='left', fill='both')
     vbar.config(command=text_main.yview)
     hbar.config(command=text_main.xview)
-
-    ConditionListWindow(gl_root, onConditionChangedCallback)
 
     gl_root.wm_protocol("WM_DELETE_WINDOW", lambda: closeWindowCallback())
 

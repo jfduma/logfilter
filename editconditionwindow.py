@@ -3,7 +3,7 @@ import tkinter as tk
 from filterutils import Condition
 
 
-class ConditionDialog:
+class EditConditionDialog:
 
     def __init__(self, root):
         self.root = root

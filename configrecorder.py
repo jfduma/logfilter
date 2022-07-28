@@ -15,7 +15,7 @@ def saveConditions(condition_list: List[Condition]):
     filename = tk.filedialog.asksaveasfilename(title='保存条件',
                                                filetypes=[('JSON', '*.json')],
                                                defaultextension='.json',
-                                               initialdir='./')
+                                               initialdir='/Users/jiangfeng/work/py/tk/sla/')
     if filename is not None and filename != '':
         with open(filename, 'w') as f:
             f.write(jsonStr)
@@ -25,7 +25,7 @@ def loadConditions(callback):
     filename = tk.filedialog.askopenfilename(title='载入条件',
                                              filetypes=[('JSON', '*.json')],
                                              defaultextension='.json',
-                                             initialdir='./')
+                                             initialdir='/Users/jiangfeng/work/py/tk/sla/')
     if filename is None or filename == '':
         return None
 

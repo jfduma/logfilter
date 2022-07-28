@@ -1,7 +1,6 @@
 import tkinter as tk
 
-import conditionwindow
-import tkinter.messagebox as messagebox
+import editconditionwindow
 from configrecorder import loadConditions, saveConditions
 
 
@@ -73,7 +72,7 @@ class ConditionListWindow:
 
     def editCondition(self, cb):
         condition = self.condition_dict[cb]
-        condition_window = conditionwindow.ConditionDialog(self.root)
+        condition_window = editconditionwindow.EditConditionDialog(self.root)
         condition_window.show(self.addCondition, condition, cb)
 
     def removeCondition(self, cb):
@@ -81,11 +80,12 @@ class ConditionListWindow:
         cb.pack_forget()
 
     def showAddConditionDialog(self):
-        condition_window = conditionwindow.ConditionDialog(self.root)
+        condition_window = editconditionwindow.EditConditionDialog(self.root)
         condition_window.show(self.addCondition)
 
     def closeCallback(self):
-        pass
+        self.callback([])
+        self.window.destroy()
 
 
 
