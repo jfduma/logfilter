@@ -2,6 +2,8 @@ import tkinter as tk
 from typing import List
 import re
 
+import chardet
+
 
 class StartLine:
     TAG_START = 0
@@ -52,61 +54,6 @@ class Condition:
 KEY_START = "init version: "
 # 记录程序启动log的所在行
 gl_start_list: [StartLine] = []
-
-
-def filterFile(filename, condition: Condition, text):
-    text.delete(0.0, tk.END)
-    with open(filename) as f:
-        for line in f:
-            success = True
-            incpatt = condition.getIncludeKeys()
-            if incpatt is not None:
-                for key in incpatt:
-                    if 0 == len(re.findall(key, line, re.IGNORECASE)):
-                        success = False
-                        break
-
-            if success:
-                excpatt = condition.getExcludeKeys()
-                if excpatt is not None:
-                    for key in excpatt:
-                        if len(re.findall(key, line, re.IGNORECASE)) > 0:
-                            success = False
-                            break
-
-            if success:
-                text.insert('insert', line)
-
-
-def filterFile(filename, conditionlist: List[Condition], text):
-    text.delete(0.0, tk.END)
-    with open(filename, 'r', encoding='utf-8', errors='ignore') as f:
-        for line in f:
-            success = True
-            for condition in conditionlist:
-                if condition.available.get() == 0:
-                    continue
-                success = True
-                incpatt = condition.getIncludeKeys()
-                if incpatt is not None:
-                    for key in incpatt:
-                        if 0 == len(re.findall(key, line, re.IGNORECASE)):
-                            success = False
-                            break
-
-                if success:
-                    excpatt = condition.getExcludeKeys()
-                    if excpatt is not None:
-                        for key in excpatt:
-                            if len(re.findall(key, line, re.IGNORECASE)) > 0:
-                                success = False
-                                break
-                # conditionList中满足其中任意一个condition即可
-                if success:
-                    break
-
-            if success:
-                text.insert('insert', line)
 
 
 def parseFile(filename):

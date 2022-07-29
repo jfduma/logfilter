@@ -5,12 +5,12 @@
 
 import tkinter as tk
 import tkinter.filedialog
-from tkinter import messagebox
-from typing import List, Dict
+from typing import List
 
 from conditionmanager import ConditionListWindow
 from eventwindow import EventSelectWindow
 from filterutils import filterFile, Condition, parseFile, StartLine
+from realtimelogfilter import RealTimeLogFilter
 from timelinewindow import TimeLineWindow
 
 
@@ -35,19 +35,21 @@ def filterFilePiece(startline, endline):
     if gl_file_name is None or gl_start_line is None:
         return
     text_main.delete(0.0, tk.END)
-    filterFile(gl_file_name, startline, endline, gl_condition_list, lambda strline: text_main.insert('insert', strline))
+    filterFile(gl_file_name, startline, endline, gl_condition_list, lambda strline: text_main.insert(tk.INSERT, strline))
 
 
 def onFilterClick():
     global gl_file_name, gl_condition_list
     if gl_file_name is not None and gl_file_name != '':
-        filterFile(gl_file_name, gl_condition_list, lambda strline: text_main.insert('insert', strline))
+        filterFile(gl_file_name, gl_condition_list, lambda strline: text_main.insert(tk.INSERT, strline))
 
 
 def onConditionChangedCallback(condition_list):
-    global gl_condition_list, gl_start_line, gl_end_line
+    global gl_condition_list, gl_start_line, gl_end_line, gl_real_time_log_filter
     gl_condition_list = condition_list
     filterFilePiece(gl_start_line, gl_end_line)
+    if gl_real_time_log_filter is not None:
+        gl_real_time_log_filter.setConditions(condition_list)
 
 
 def openFilterDialog():
@@ -56,6 +58,29 @@ def openFilterDialog():
 
 def openEventDialog():
     EventSelectWindow(gl_root, onConditionChangedCallback)
+
+
+def appendTextCallback(strline):
+    global text_main, gl_vbar
+    text_main.insert(tk.END, strline)
+    yview = text_main.yview()[1]
+    if yview > 0.999:
+        text_main.yview(tk.MOVETO, 1.0)
+
+
+def startRealTimeLog():
+    global text_main, gl_condition_list, gl_real_time_log_filter, gl_btn_real_time_log
+    if gl_real_time_log_filter is None:
+        text_main.delete(0.0, tk.END)
+        realfilter = RealTimeLogFilter(lambda strline: appendTextCallback(strline))
+        realfilter.setConditions(gl_condition_list)
+        realfilter.start()
+        gl_real_time_log_filter = realfilter
+        gl_btn_real_time_log.config(text='停止log')
+    else:
+        gl_real_time_log_filter.stop()
+        gl_real_time_log_filter = None
+        gl_btn_real_time_log.config(text='实时log')
 
 
 def closeWindowCallback():
@@ -102,6 +127,11 @@ if __name__ == '__main__':
     btn_event_dialog = tk.Button(first_frame, text="事件窗口", command=openEventDialog)
     btn_event_dialog.pack(side='left')
 
+    # 实时log 按钮
+    gl_real_time_log_filter: RealTimeLogFilter = None
+    gl_btn_real_time_log = tk.Button(first_frame, text="实时log", command=startRealTimeLog)
+    gl_btn_real_time_log.pack(side='left')
+
     # --------------  第二层 工具栏  --------------
     second_frame = tk.LabelFrame(gl_root)
     second_frame.pack(side='top', fill='x')
@@ -111,13 +141,13 @@ if __name__ == '__main__':
     # 用于显示log文本的文本框和滚动条
     hbar = tk.Scrollbar(gl_root, orient='horizontal')
     hbar.pack(side='bottom', fill='x')
-    vbar = tk.Scrollbar(gl_root, orient='vertical')
-    vbar.pack(side='right', fill='y')
+    gl_vbar = tk.Scrollbar(gl_root, orient='vertical')
+    gl_vbar.pack(side='right', fill='y')
 
     text_main = tk.Text(gl_root, width=1800, height=800, font=('Menlo Regular', 14), wrap='char', spacing1=5,
-                        xscrollcommand=hbar.set, yscrollcommand=vbar.set)
+                        xscrollcommand=hbar.set, yscrollcommand=gl_vbar.set)
     text_main.pack(side='left', fill='both')
-    vbar.config(command=text_main.yview)
+    gl_vbar.config(command=text_main.yview)
     hbar.config(command=text_main.xview)
 
     gl_root.wm_protocol("WM_DELETE_WINDOW", lambda: closeWindowCallback())
