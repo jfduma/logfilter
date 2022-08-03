@@ -1,7 +1,7 @@
 import tkinter as tk
 
 import editconditionwindow
-from configrecorder import loadConditions, saveConditions
+from configrecorder import loadConditions, saveConditions, loadFromFile
 
 
 class ConditionListWindow:
@@ -40,6 +40,10 @@ class ConditionListWindow:
         # 执行过滤按钮
         btn_add_condition = tk.Button(first_frame, text="done", command=lambda: self.callback(self.condition_dict.values()))
         btn_add_condition.pack(side='left')
+
+        # 自动加载默认条件配置文件
+        filename = '/Users/jiangfeng/work/py/tk/sla/default.json'
+        self.addAllConditions(loadFromFile(filename))
 
     def addAllConditions(self, condition_list):
         for cb in self.condition_dict.keys():

@@ -1,4 +1,5 @@
 import json
+import os
 import tkinter as tk
 from typing import List
 
@@ -29,21 +30,26 @@ def loadConditions(callback):
     if filename is None or filename == '':
         return None
 
+    callback(loadFromFile(filename))
+
+
+def loadFromFile(filename):
     condition_list = []
-    with open(filename) as f:
-        for line in f:
-            jsonData = json.loads(line)
-            if jsonData is not None:
-                for jsonItem in jsonData:
-                    name = jsonItem['name']
-                    if name is None or name == '':
-                        continue
-                    condition = Condition(name)
-                    condition_list.append(condition)
-                    includeList = jsonItem['include']
-                    for key in includeList:
-                        condition.addIncludeKey(key)
-                    excludeList = jsonItem['exclude']
-                    for key in excludeList:
-                        condition.addExcludeKey(key)
-    callback(condition_list)
+    if os.path.isfile(filename):
+        with open(filename) as f:
+            for line in f:
+                jsonData = json.loads(line)
+                if jsonData is not None:
+                    for jsonItem in jsonData:
+                        name = jsonItem['name']
+                        if name is None or name == '':
+                            continue
+                        condition = Condition(name)
+                        condition_list.append(condition)
+                        includeList = jsonItem['include']
+                        for key in includeList:
+                            condition.addIncludeKey(key)
+                        excludeList = jsonItem['exclude']
+                        for key in excludeList:
+                            condition.addExcludeKey(key)
+    return condition_list

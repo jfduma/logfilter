@@ -47,7 +47,7 @@ class RealTimeLogFilter:
                 line = line.decode(encode_type['encoding'])
 
                 condition_list = self.condition_list
-                result = filterText(line, condition_list, True)
+                result = filterText(line, condition_list)
                 if result is not None:
                     self.callback(result)
 

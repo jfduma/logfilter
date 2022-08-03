@@ -27,7 +27,8 @@ class EventSelectWindow:
     def initConditions(self):
         for key in EVENT_TAG_LIST:
             condition = Condition(key)
-            condition.addIncludeKey('[' + EVENT_MARK + key + ']')
+            condition.mode = 1
+            condition.addIncludeKey('\\[' + EVENT_MARK + key + '\\]')
             self.addCondition(condition)
 
     def addCondition(self, condition):

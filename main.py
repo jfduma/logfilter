@@ -90,6 +90,13 @@ def closeWindowCallback():
     #     gl_root.destroy()
 
 
+def showTextPopupMenu(event):
+    global gl_root, text_main
+    menu = tk.Menu(gl_root, tearoff=False)
+    menu.add_command(label='clean', command=lambda: text_main.delete(0.0, tk.END))
+    menu.post(event.x_root, event.y_root)
+
+
 if __name__ == '__main__':
     default_title = '场景引擎log分析工具'
 
@@ -146,10 +153,14 @@ if __name__ == '__main__':
 
     text_main = tk.Text(gl_root, width=1800, height=800, font=('Menlo Regular', 14), wrap='char', spacing1=5,
                         xscrollcommand=hbar.set, yscrollcommand=gl_vbar.set)
+    text_main.bind('<Button-2>', lambda event: showTextPopupMenu(event))
     text_main.pack(side='left', fill='both')
     gl_vbar.config(command=text_main.yview)
     hbar.config(command=text_main.xview)
 
     gl_root.wm_protocol("WM_DELETE_WINDOW", lambda: closeWindowCallback())
+
+    # 自动加载默认条件配置文件
+    openFilterDialog()
 
     gl_root.mainloop()

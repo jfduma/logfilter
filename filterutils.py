@@ -34,6 +34,8 @@ class Condition:
         self.includeCondition = []
         # 排除数组为 ||，即：不包含c或d
         self.excludeCondition = []
+        # filter mode : 0 normal mode, 1 event mode
+        self.mode = 0
 
     def addIncludeKey(self, key):
         self.includeCondition.append(key)
@@ -112,7 +114,7 @@ def filterFile(filename, startline, endline, conditionlist, callback):
                 callback(result)
 
 
-def filterText(text, condition_list, for_event=False):
+def filterText(text, condition_list):
     success = True
     for condition in condition_list:
         if condition.available.get() == 0:
@@ -126,8 +128,9 @@ def filterText(text, condition_list, for_event=False):
                 if search_result is None:
                     success = False
                     break
-                elif for_event:
-                    text = text.replace(key, "")
+                elif condition.mode == 1:  # 删除本文中匹配到的关键字
+                    text = text[:search_result.start()] + text[search_result.end():]
+                    # text = text.replace(key, "")
 
         if success:
             excpatt = condition.getExcludeKeys()
