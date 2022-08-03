@@ -4,6 +4,8 @@ import subprocess
 from queue import Queue
 import chardet
 
+from filterutils import filterText
+
 
 class RealTimeLogFilter:
 
@@ -45,30 +47,8 @@ class RealTimeLogFilter:
                 line = line.decode(encode_type['encoding'])
 
                 condition_list = self.condition_list
-                success = True
-                for condition in condition_list:
-                    if condition.available.get() == 0:
-                        continue
-                    success = True
-                    incpatt = condition.getIncludeKeys()
-                    if incpatt is not None:
-                        for key in incpatt:
-                            if 0 == len(re.findall(key, line, re.IGNORECASE)):
-                                success = False
-                                break
-
-                    if success:
-                        excpatt = condition.getExcludeKeys()
-                        if excpatt is not None:
-                            for key in excpatt:
-                                if len(re.findall(key, line, re.IGNORECASE)) > 0:
-                                    success = False
-                                    break
-                    # conditionList中满足其中任意一个condition即可
-                    if success:
-                        break
-
-                if success:
-                    self.callback(line)
+                result = filterText(line, condition_list, True)
+                if result is not None:
+                    self.callback(result)
 
             print("stop real time log catching")

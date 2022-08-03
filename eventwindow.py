@@ -1,20 +1,9 @@
 import tkinter as tk
 
-from filterutils import Condition
+from filterutils import Condition, EVENT_TAG_LIST, EVENT_MARK
 
 
 class EventSelectWindow:
-
-    MARK = "_#V#_"
-    TAG_LIST = [
-        "master",   # 主流程
-        "message",  # 消息详情
-        "trigger",  # 触发细节
-        "signal",   # 信号详情
-        "sce_exe",  # 场景文件执行过程
-        "act_exe",  # 动作执行
-        "network",  # 网络状态变化
-    ]
 
     def __init__(self, root, callback):
         self.condition_dict = {}
@@ -36,9 +25,9 @@ class EventSelectWindow:
         self.initConditions()
 
     def initConditions(self):
-        for key in EventSelectWindow.TAG_LIST:
+        for key in EVENT_TAG_LIST:
             condition = Condition(key)
-            condition.addIncludeKey(EventSelectWindow.MARK + key)
+            condition.addIncludeKey('[' + EVENT_MARK + key + ']')
             self.addCondition(condition)
 
     def addCondition(self, condition):

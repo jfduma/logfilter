@@ -4,6 +4,17 @@ import re
 
 import chardet
 
+EVENT_MARK = "_#V#_"
+EVENT_TAG_LIST = [
+    "master",  # 主流程
+    "message",  # 消息详情
+    "trigger",  # 触发细节
+    "signal",  # 信号详情
+    "sce_exe",  # 场景文件执行过程
+    "act_exe",  # 动作执行
+    "network",  # 网络状态变化
+]
+
 
 class StartLine:
     TAG_START = 0
@@ -96,28 +107,40 @@ def filterFile(filename, startline, endline, conditionlist, callback):
             if linenum > endline:
                 break
 
-            success = True
-            for condition in conditionlist:
-                if condition.available.get() == 0:
-                    continue
-                success = True
-                incpatt = condition.getIncludeKeys()
-                if incpatt is not None:
-                    for key in incpatt:
-                        if 0 == len(re.findall(key, line, re.IGNORECASE)):
-                            success = False
-                            break
+            result = filterText(line, conditionlist)
+            if result is not None:
+                callback(result)
 
-                if success:
-                    excpatt = condition.getExcludeKeys()
-                    if excpatt is not None:
-                        for key in excpatt:
-                            if len(re.findall(key, line, re.IGNORECASE)) > 0:
-                                success = False
-                                break
-                # conditionList中满足其中任意一个condition即可
-                if success:
+
+def filterText(text, condition_list, for_event=False):
+    success = True
+    for condition in condition_list:
+        if condition.available.get() == 0:
+            continue
+        success = True
+        incpatt = condition.getIncludeKeys()
+        if incpatt is not None:
+            for key in incpatt:
+                search_result = re.search(key, text, re.IGNORECASE)
+
+                if search_result is None:
+                    success = False
                     break
+                elif for_event:
+                    text = text.replace(key, "")
 
-            if success:
-                callback(line)
+        if success:
+            excpatt = condition.getExcludeKeys()
+            if excpatt is not None:
+                for key in excpatt:
+                    if len(re.findall(key, text, re.IGNORECASE)) > 0:
+                        success = False
+                        break
+        # conditionList中满足其中任意一个condition即可
+        if success:
+            break
+
+    if success:
+        return text
+    else:
+        return None
