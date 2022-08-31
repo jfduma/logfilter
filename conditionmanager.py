@@ -42,7 +42,7 @@ class ConditionListWindow:
         btn_add_condition.pack(side='left')
 
         # 自动加载默认条件配置文件
-        filename = '/Users/jiangfeng/work/py/tk/sla/default.json'
+        filename = '../sla/default.json'
         self.addAllConditions(loadFromFile(filename))
 
     def addAllConditions(self, condition_list):
