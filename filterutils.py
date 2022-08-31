@@ -101,8 +101,9 @@ def parseFile(filename):
 def filterFile(filename, startline, endline, conditionlist, callback):
     global gl_start_list
 
+    encoding = getFileEncoding(filename)
     linenum = 0
-    with open(filename, 'r', encoding='utf-8', errors='ignore') as f:
+    with open(filename, 'r', encoding=encoding, errors='ignore') as f:
         for line in f:
             linenum += 1
             if linenum < startline:
@@ -113,6 +114,14 @@ def filterFile(filename, startline, endline, conditionlist, callback):
             result = filterText(line, conditionlist)
             if result is not None:
                 callback(result)
+
+
+def getFileEncoding(filename):
+    with open(filename, 'rb') as f:
+        raw_data = b''.join([f.readline() for _ in range(5)])
+        encoding = chardet.detect(raw_data)['encoding']
+        print("file encoding {}".format(encoding))
+        return encoding
 
 
 def filterText(text, condition_list):
