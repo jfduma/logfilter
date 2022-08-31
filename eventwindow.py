@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from filterutils import Condition, EVENT_TAG_LIST, EVENT_MARK
+from filterutils import Condition, EVENT_TAG_MAP, EVENT_MARK
 
 
 class EventSelectWindow:
@@ -25,8 +25,8 @@ class EventSelectWindow:
         self.initConditions()
 
     def initConditions(self):
-        for key in EVENT_TAG_LIST:
-            condition = Condition(key)
+        for key in list(EVENT_TAG_MAP.keys()):
+            condition = Condition(EVENT_TAG_MAP[key])
             condition.mode = 1
             condition.addIncludeKey('\\[' + EVENT_MARK + key + '\\]')
             self.addCondition(condition)

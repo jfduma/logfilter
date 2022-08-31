@@ -11,6 +11,7 @@ from conditionmanager import ConditionListWindow
 from eventwindow import EventSelectWindow
 from filterutils import filterFile, Condition, parseFile, StartLine
 from realtimelogfilter import RealTimeLogFilter
+from simulatesignalwindow import SimulateSignalWindow
 from timelinewindow import TimeLineWindow
 
 
@@ -83,6 +84,11 @@ def startRealTimeLog():
         gl_btn_real_time_log.config(text='实时log')
 
 
+def openSimulateSignalWindow():
+    global gl_root
+    SimulateSignalWindow(gl_root).show()
+
+
 def closeWindowCallback():
     global gl_root
     gl_root.destroy()
@@ -138,6 +144,10 @@ if __name__ == '__main__':
     gl_real_time_log_filter: RealTimeLogFilter = None
     gl_btn_real_time_log = tk.Button(first_frame, text="实时log", command=startRealTimeLog)
     gl_btn_real_time_log.pack(side='left')
+
+    # 模拟信号工具窗 按钮
+    gl_btn_simulate = tk.Button(first_frame, text="模拟信号", command=openSimulateSignalWindow)
+    gl_btn_simulate.pack(side='left')
 
     # --------------  第二层 工具栏  --------------
     second_frame = tk.LabelFrame(gl_root)
