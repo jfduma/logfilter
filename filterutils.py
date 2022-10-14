@@ -65,7 +65,7 @@ class Condition:
         return self.excludeCondition
 
 
-KEY_START = "init version: "
+KEY_START = '\[_#V#_master\]场景引擎启动'
 # 记录程序启动log的所在行
 gl_start_list: [StartLine] = []
 
