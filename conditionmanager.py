@@ -1,21 +1,26 @@
 import tkinter as tk
+from abc import ABC
 
 import editconditionwindow
 from configrecorder import loadConditions, saveConditions, loadFromFile
+from window import Window
 
 
-class ConditionListWindow:
+class ConditionListWindow(Window, ABC):
 
     def __init__(self, root, callback):
+        Window.__init__(self, root)
         self.condition_dict = {}
         self.root = root
         self.callback = callback
-        self.window = tk.Toplevel(root)
-        self.window.title("conditions")
-        self.window.geometry('280x320+1220+100')
-        self.window.wm_protocol("WM_DELETE_WINDOW", lambda: self.closeCallback())
 
-        first_frame = tk.LabelFrame(self.window, relief='raised')
+    def init_show(self):
+        window = tk.Toplevel(self.root)
+        self.window = window
+        window.title("conditions")
+        window.geometry('280x320+1220+100')
+
+        first_frame = tk.LabelFrame(window, relief='raised')
         first_frame.pack(side='top', fill='x')
 
         # 从文件载入条件按钮
@@ -30,7 +35,7 @@ class ConditionListWindow:
                                        command=lambda: saveConditions(self.condition_dict.values()))
         btn_save_condition.pack(side='left')
 
-        # second_frame = tk.LabelFrame(self.window, relief='raised')
+        # second_frame = tk.LabelFrame(window, relief='raised')
         # second_frame.pack(side='top', fill='x')
 
         # 添加条件按钮
@@ -44,6 +49,7 @@ class ConditionListWindow:
         # 自动加载默认条件配置文件
         filename = '../sla/default.json'
         self.addAllConditions(loadFromFile(filename))
+        return window
 
     def addAllConditions(self, condition_list):
         for cb in self.condition_dict.keys():
@@ -89,7 +95,7 @@ class ConditionListWindow:
 
     def closeCallback(self):
         self.callback([])
-        self.window.destroy()
+        Window.closeCallback(self)
 
 
 

@@ -24,6 +24,9 @@ class EventSelectWindow:
 
         self.initConditions()
 
+    def show(self):
+        self.window.focus_set()
+
     def initConditions(self):
         for key in list(EVENT_TAG_MAP.keys()):
             condition = Condition(EVENT_TAG_MAP[key])

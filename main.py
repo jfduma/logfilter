@@ -36,7 +36,8 @@ def filterFilePiece(startline, endline):
     if gl_file_name is None or gl_start_line is None:
         return
     text_main.delete(0.0, tk.END)
-    filterFile(gl_file_name, startline, endline, gl_condition_list, lambda strline: text_main.insert(tk.INSERT, strline))
+    filterFile(gl_file_name, startline, endline, gl_condition_list,
+               lambda strline: text_main.insert(tk.INSERT, strline))
 
 
 def onFilterClick():
@@ -54,11 +55,17 @@ def onConditionChangedCallback(condition_list):
 
 
 def openFilterDialog():
-    ConditionListWindow(gl_root, onConditionChangedCallback)
+    global gl_ConditionListWindow
+    if gl_ConditionListWindow is None:
+        gl_ConditionListWindow = ConditionListWindow(gl_root, onConditionChangedCallback)
+    gl_ConditionListWindow.show()
 
 
 def openEventDialog():
-    EventSelectWindow(gl_root, onConditionChangedCallback)
+    global gl_EventSelectWindow
+    if gl_EventSelectWindow is None:
+        gl_EventSelectWindow = EventSelectWindow(gl_root, onConditionChangedCallback)
+    gl_EventSelectWindow.show()
 
 
 def appendTextCallback(strline):
@@ -85,8 +92,11 @@ def startRealTimeLog():
 
 
 def openSimulateSignalWindow():
-    global gl_root
-    SimulateSignalWindow(gl_root).show()
+    global gl_root, gl_SimulateSignalWindow
+    if gl_SimulateSignalWindow is None:
+        gl_SimulateSignalWindow = SimulateSignalWindow(gl_root)
+
+    gl_SimulateSignalWindow.show()
 
 
 def closeWindowCallback():
@@ -111,6 +121,9 @@ if __name__ == '__main__':
     gl_condition_list: List[Condition] = []
     gl_start_line: int = None
     gl_end_line: int = None
+    gl_SimulateSignalWindow: SimulateSignalWindow = None
+    gl_EventSelectWindow: EventSelectWindow = None
+    gl_ConditionListWindow: ConditionListWindow = None
 
     # 添加主窗口，获取屏幕尺寸以计算布局参数，使窗口居屏幕中央
     gl_root = tk.Tk()
